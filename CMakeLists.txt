@@ -94,6 +94,15 @@ endif( NOT STRNICMP_EXISTS )
 
 set( WADEXT_LIBS "${ZLIB_LIBRARIES}" )
 
+option( DEF_STRIP_NODES "Strip nodes from extracted maps by default." NO )
+if( DEF_STRIP_NODES )
+	if ( MSVC )
+		set( ALL_C_FLAGS "${ALL_C_FLAGS} /DDEFAULT_STRIP" )
+	else ( MSVC )
+		set( ALL_C_FLAGS "${ALL_C_FLAGS} -DDEFAULT_STRIP" )
+	endif( MSVC )
+endif()
+
 set( HEADERS
 	fileformat.h
 	resourcefile.h

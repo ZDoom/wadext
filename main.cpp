@@ -77,7 +77,11 @@ int main(int argc, char ** argv)
 	}
 	else if (argc > 1)
 	{
+#ifdef DEFAULT_STRIP
 		ExtractWad(argv[1],DO_STRIP);
+#else
+		ExtractWad(argv[1], 0);
+#endif
 	}
 	else
 	{

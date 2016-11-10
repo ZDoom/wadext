@@ -24,6 +24,7 @@
 #include <direct.h>
 #include <io.h>
 #include <stdio.h>
+#include <string>
 #include "wadext.h"
 #include "ResourceFile.h"
 #include "fileformat.h"
@@ -438,11 +439,80 @@ void GenerateTextureFile(WadItemList * pTex,WadItemList * pPNam, int options)
 	GenerateTextureFile(buffer, (const char*)pTex->Address(), (const char *)pPNam->Address(), options, nulltex);
 }
 
+//==========================================================================
+//
+// IsSeparator (taken from ZDoom)
+//
+// Returns true if the character is a path separator.
+//
+//==========================================================================
+
+static inline bool IsSeparator(int c)
+{
+	if (c == '/')
+		return true;
+#ifdef WIN32
+	if (c == '\\' || c == ':')
+		return true;
+#endif
+	return false;
+}
+
+//==========================================================================
+//
+// ExtractFileBase (taken from ZDoom)
+//
+// Returns the file part of a pathname, optionally including the extension.
+//
+//==========================================================================
+
+std::string ExtractFileBase(const char *path, bool include_extension)
+{
+	const char *src, *dot;
+
+	src = path + strlen(path) - 1;
+
+	if (src >= path)
+	{
+		// back up until a / or the start
+		while (src != path && !IsSeparator(*(src - 1)))
+			src--;
+
+		// Check for files with drive specification but no path
+#if defined(_WIN32)
+		if (src == path && src[0] != 0)
+		{
+			if (src[1] == ':')
+				src += 2;
+		}
+#endif
+
+		if (!include_extension)
+		{
+			dot = src;
+			while (*dot && *dot != '.')
+			{
+				dot++;
+			}
+			return std::string(src, dot - src);
+		}
+		else
+		{
+			return std::string(src);
+		}
+	}
+	return std::string();
+}
+
+
 void ExtractWad(char * wadfilename,int options)
 {
 	WadItemList pTex1(-1), pTex2(-1), pPnam(-1);
 
 	OpenMainWad(wadfilename);
+	auto name = ExtractFileBase(wadfilename, false);
+	mkdir(name.c_str());
+	chdir(name.c_str());
 	
 	PNames = mainwad->FindLump("PNAMES");
 	getcwd(maindir, 128);
@@ -543,6 +613,7 @@ void ExtractWad(char * wadfilename,int options)
 			}
 		}
 	}
+	chdir("..");
 }			
 
 void ConvertTextureX()
