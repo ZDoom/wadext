@@ -20,13 +20,17 @@
 //--------------------------------------------------------------------------
 //
 
-#include <windows.h>
+#ifdef _MSC_VER
 #include <direct.h>
-#include <io.h>
+#else // !_MSC_VER
+#include <unistd.h>
+#include <sys/stat.h>
+#endif // _MSC_VER
+#include <string.h>
 #include <stdio.h>
 #include <string>
 #include "wadext.h"
-#include "ResourceFile.h"
+#include "resourcefile.h"
 #include "fileformat.h"
 
 #pragma warning(disable:4996)
@@ -38,6 +42,34 @@ char maindir[128];
 bool pstartfound=false;
 WadItemList PNames(-1);
 
+#ifndef _MSC_VER
+
+static char* strlwr(char* str)
+{
+	for (char* ch = str; '\0' != *ch; ++ch)
+	{
+		*ch = tolower(*ch);
+	}
+	
+	return str;
+}
+
+static char* strupr(char* str)
+{
+	for (char* ch = str; '\0' != *ch; ++ch)
+	{
+		*ch = tolower(*ch);
+	}
+	
+	return str;
+}
+
+static int mkdir(const char *path)
+{
+	return mkdir(path, 0755);
+}
+
+#endif // !_MSC_VER
 
 char * getdir(const char * lump)
 {
@@ -133,7 +165,8 @@ void Extract(WadItemList *w,char * dir,const char * ext, int options, bool isfla
 	// Flats are easy to misidentify so if we are in the flat namespace and the size is exactly 4096 bytes, let it pass as flat
 	if (isflat && (ft.type & FG_MASK) != FG_GFX && (ft.type == FT_DOOMSND || ft.type == FT_MP3 || w->Length() == 4096))
 	{
-		ft = { FT_BINARY, ".LMP"};
+		ft.type = FT_BINARY;
+		ft.extension = ".LMP";
 	}
 
 	if (dir != NULL)

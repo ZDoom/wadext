@@ -2,7 +2,7 @@
 #pragma pack(1)
 #pragma warning(disable:4200)
 
-#include "ResourceFile.h"
+#include "resourcefile.h"
 
 extern CWADFile *mainwad;
 

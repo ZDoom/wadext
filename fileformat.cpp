@@ -20,10 +20,9 @@
 //--------------------------------------------------------------------------
 //
 
-#include <windows.h>
-#include <direct.h>
-#include <io.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "wadext.h"
 #include "fileformat.h"
 

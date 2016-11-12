@@ -22,7 +22,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "ResourceFile.h"
+#include "resourcefile.h"
 
 //==========================================================================
 //

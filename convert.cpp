@@ -55,13 +55,10 @@
 */
 
 
-#include <windows.h>
-#include <direct.h>
-#include <io.h>
 #include <stdio.h>
 #include "zlib/zlib.h"
 #include "wadext.h"
-#include "ResourceFile.h"
+#include "resourcefile.h"
 #include "fileformat.h"
 #include "tarray.h"
 
@@ -602,12 +599,12 @@ bool IsHack(const uint8_t *data, int length)
 	{
 		for (x = 0; x < x2; ++x)
 		{
-			const column_t *col = (column_t*)((BYTE*)realpatch + cofs[x]);
+			const column_t *col = (column_t*)((uint8_t *)realpatch + cofs[x]);
 			if (col->topdelta != 0 || col->length != 0)
 			{
 				return false;	// It's not bad!
 			}
-			col = (column_t *)((BYTE *)col + 256 + 4);
+			col = (column_t *)((uint8_t *)col + 256 + 4);
 			if (col->topdelta != 0xFF)
 			{
 				return false;	// More than one post in a column!
@@ -635,7 +632,7 @@ bool PatchToPng(int options, const uint8_t *ldata, int length, const char *pngpa
 	uint8_t *image = new uint8_t[width * height * 4];
 	memset(image, 0, width*height * 4);
 
-	maxcol = (const column_t *)((const BYTE *)patch + length - 3);
+	maxcol = (const column_t *)((const uint8_t *)patch + length - 3);
 
 	// detect broken patches
 	if (IsHack(ldata, length))
@@ -643,7 +640,7 @@ bool PatchToPng(int options, const uint8_t *ldata, int length, const char *pngpa
 		// Draw the image to the buffer
 		for (x = 0; x < width; ++x)
 		{
-			const BYTE *in = (const BYTE *)patch + patch->columnofs[x] + 3;
+			const uint8_t *in = (const uint8_t *)patch + patch->columnofs[x] + 3;
 
 			for (int y = height; y > 0; --y)
 			{
@@ -662,7 +659,7 @@ bool PatchToPng(int options, const uint8_t *ldata, int length, const char *pngpa
 		// Draw the image to the buffer
 		for (x = 0; x < width; ++x)
 		{
-			const column_t *column = (const column_t *)((const BYTE *)patch + patch->columnofs[x]);
+			const column_t *column = (const column_t *)((const uint8_t *)patch + patch->columnofs[x]);
 			int top = -1;
 
 			while (column < maxcol && column->topdelta != 0xFF)
@@ -686,7 +683,7 @@ bool PatchToPng(int options, const uint8_t *ldata, int length, const char *pngpa
 					}
 					if (len > 0)
 					{
-						const BYTE *in = (const BYTE *)column + 3;
+						const uint8_t *in = (const uint8_t *)column + 3;
 						for (int i = 0; i < len; ++i)
 						{
 							unsigned char *ddata = &image[(x + (top+i)*width) * 4];
@@ -697,7 +694,7 @@ bool PatchToPng(int options, const uint8_t *ldata, int length, const char *pngpa
 						}
 					}
 				}
-				column = (const column_t *)((const BYTE *)column + column->length + 4);
+				column = (const column_t *)((const uint8_t *)column + column->length + 4);
 			}
 		}
 	}

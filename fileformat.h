@@ -70,8 +70,8 @@ struct FileType
 // posts are runs of non masked source pixels
 struct column_t
 {
-	BYTE		topdelta;		// -1 is the last post in a column
-	BYTE		length; 		// length data bytes follows
+	uint8_t		topdelta;		// -1 is the last post in a column
+	uint8_t		length; 		// length data bytes follows
 };
 
 struct patch_t
@@ -127,9 +127,9 @@ struct PCXHeader
 };
 
 #ifndef __BIG_ENDIAN__
-#define MAKE_ID(a,b,c,d)	((DWORD)((a)|((b)<<8)|((c)<<16)|((d)<<24)))
+#define MAKE_ID(a,b,c,d)	((uint32_t)((a)|((b)<<8)|((c)<<16)|((d)<<24)))
 #else
-#define MAKE_ID(a,b,c,d)	((DWORD)((d)|((c)<<8)|((b)<<16)|((a)<<24)))
+#define MAKE_ID(a,b,c,d)	((uint32_t)((d)|((c)<<8)|((b)<<16)|((a)<<24)))
 #endif
 
 #pragma pack()
