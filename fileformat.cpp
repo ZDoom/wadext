@@ -312,9 +312,9 @@ bool isHmp(const uint8_t *pbuffer, int len)
 bool isXmi(const uint8_t *pbuffer, int len)
 {
 	return len >= 12 &&
-		(IsMagic(pbuffer, "FORM") && IsMagic(pbuffer + 8, "XDIR") ||
-			IsMagic(pbuffer, "FORM") && IsMagic(pbuffer + 8, "XMID") ||
-			IsMagic(pbuffer, "CAT ") && IsMagic(pbuffer + 8, "XMID"));
+		((IsMagic(pbuffer, "FORM") && IsMagic(pbuffer + 8, "XDIR")) ||
+			(IsMagic(pbuffer, "FORM") && IsMagic(pbuffer + 8, "XMID")) ||
+			(IsMagic(pbuffer, "CAT ") && IsMagic(pbuffer + 8, "XMID")));
 }
 
 //============================================================================

@@ -33,7 +33,7 @@ int ParseOptions(int argc,char ** argv,int & index)
 {
 	struct parseinf
 	{
-		char * opt;
+		const char * opt;
 		int flag;
 		int argc;
 	} pi[]={

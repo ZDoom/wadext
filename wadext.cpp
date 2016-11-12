@@ -117,10 +117,10 @@ const char * MakeFileName(const char * base, const char * ext)
 	{
 		// replace special path characters in the lump name
 		if (basebuffer[i] == '\\') basebuffer[i] = '^';
-		if (basebuffer[i] == '/') basebuffer[i] = '§';
-		if (basebuffer[i] == ':') basebuffer[i] = '¡';
-		if (basebuffer[i] == '*') basebuffer[i] = '²';
-		if (basebuffer[i] == '?') basebuffer[i] = '¿';
+		if (basebuffer[i] == '/') basebuffer[i] = '\xA7';
+		if (basebuffer[i] == ':') basebuffer[i] = '\xA1';
+		if (basebuffer[i] == '*') basebuffer[i] = '\xB2';
+		if (basebuffer[i] == '?') basebuffer[i] = '\xBF';
 	}
 
 	for(int i=0;;i++)
@@ -134,7 +134,7 @@ const char * MakeFileName(const char * base, const char * ext)
 	}
 }
 
-void Extract(WadItemList *w,char * dir,const char * ext, int options, bool isflat)	//It is completely impossible to detect flats, so we have to flag it when extracting the F_ namespace
+void Extract(WadItemList *w,const char * dir,const char * ext, int options, bool isflat)	//It is completely impossible to detect flats, so we have to flag it when extracting the F_ namespace
 {
 	FileType ft = IdentifyFileType(w->Name(), (uint8_t*)w->Address(), w->Length());
 	const char *filename;
@@ -208,9 +208,8 @@ void Extract(WadItemList *w,char * dir,const char * ext, int options, bool isfla
 	chdir(maindir);
 }
 
-int ListExtract(int startmarker,char * dir,char * endm,char * endm2,bool isflat,int options,int pack=0)
+int ListExtract(int startmarker,const char * dir,const char * endm,const char * endm2,bool isflat,int options,int pack=0)
 {
-	int ev=0;
 	char dirbuf[200];
 
 	mkdir(dir);
@@ -234,11 +233,10 @@ bool isLevel(int lump)
 	return false;
 }
 
-int MapExtract(int startmarker,char *dir,int options)
+int MapExtract(int startmarker,const char *dir,int options)
 {
 	int i;
 	char buffer[40];
-	int packlength[13]={0};
 	TArray<CWADLump> directory;
 
 	mkdir(dir);
