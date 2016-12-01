@@ -572,7 +572,7 @@ static Detector detectors[] =
 	{ isSpc,{ FT_SPC, ".SPC" } },
 	{ isVoc,{ FT_VOC, ".VOC" }},
 	{ isWav,{ FT_WAV, ".WAV" } },
-	{ isImgz,{ FT_IMGZ ".IMGZ" } },
+	{ isImgz,{ FT_IMGZ, ".IMGZ" } },
 	{ isHmi, { FT_HMI, ".HMI" }},
 	{ isHmp,{ FT_HMP, ".HMP" } },
 	{ isXmi,{ FT_XMI, ".XMI" } },
