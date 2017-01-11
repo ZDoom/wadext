@@ -85,7 +85,7 @@ char * getdir(const char * lump)
 bool isPatch(const char * n)
 {
 	if (!pstartfound || PNames.mLump < 0) return false;
-	long * l = (long*)PNames.Address();
+	uint32_t * l = (uint32_t*)PNames.Address();
 	char * c = (char*)(l + 1);
 	char nn[9];
 
