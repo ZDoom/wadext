@@ -58,7 +58,7 @@ static char* strupr(char* str)
 {
 	for (char* ch = str; '\0' != *ch; ++ch)
 	{
-		*ch = tolower(*ch);
+		*ch = toupper(*ch);
 	}
 	
 	return str;
