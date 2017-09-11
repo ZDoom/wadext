@@ -52,7 +52,7 @@ if( MSVC )
 endif( MSVC )
 
 if( CMAKE_COMPILER_IS_GNUCXX )
-	set( ALL_C_FLAGS "${ALL_C_FLAGS} -ffast-math -pipe" )
+	set( ALL_C_FLAGS "${ALL_C_FLAGS} -Wc++11-extensions -ffast-math -pipe" )
 	if( GPROF )
 		set( ALL_C_FLAGS "${ALL_C_FLAGS} -pg -g" )
 	else( GPROF )
