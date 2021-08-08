@@ -28,8 +28,7 @@ class CWADFile
 	uint64_t m_LumpStart;
 	
 public:
-	CWADFile(const char * filename);
-	CWADFile(const char * name, const char * memory);
+	CWADFile(const char * filename, FILE* f);
 	~CWADFile(void);
 
 	const char * GetName() const

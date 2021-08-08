@@ -670,3 +670,64 @@ void ConvertTextureX()
 	if (ft2) GenerateTextureFile("textures.txt2", bt2, bpn, 0, false);
 }
 
+//==========================================================================
+//
+//
+//
+//==========================================================================
+
+struct GrpInfo
+{
+	uint32_t		Magic[3];
+	uint32_t		NumLumps;
+};
+
+struct GrpLump
+{
+	union
+	{
+		struct
+		{
+			char		Name[12];
+			uint32_t		Size;
+		};
+		char NameWithZero[13];
+	};
+};
+
+
+void GrpExtract(const char* filename, FILE* f)
+{
+	TArray<GrpLump> fileinfo;
+
+	GrpInfo header;
+
+	if (1 != fread(&header, sizeof(header), 1, f)) return;
+
+	fileinfo.Resize(header.NumLumps);
+	if (header.NumLumps != fread(&fileinfo[0], sizeof(GrpLump), header.NumLumps, f)) return;
+	if (memcmp(header.Magic, "KenSilverman", 12))
+	{
+		return;
+	}
+
+	auto name = ExtractFileBase(filename, false);
+	mkdir(name.c_str());
+	chdir(name.c_str());
+
+	TArray<char> buffer;
+	for (uint32_t i = 0; i < header.NumLumps; i++)
+	{
+		buffer.Resize(fileinfo[i].Size);
+		fileinfo[i].NameWithZero[12] = '\0';	// Be sure filename is null-terminated
+		if (fileinfo[i].Size != fread(&buffer[0], 1, fileinfo[i].Size, f)) return;
+		FILE* fout = fopen(fileinfo[i].NameWithZero, "wb");
+		if (fout)
+		{
+			fwrite(&buffer[0], 1, fileinfo[i].Size, fout);
+			fclose(fout);
+		}
+	}
+	exit(1);
+}
+

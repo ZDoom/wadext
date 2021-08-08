@@ -30,7 +30,7 @@
 //
 //==========================================================================
 
-CWADFile::CWADFile(const char * filename)
+CWADFile::CWADFile(const char * filename, FILE* f)
 {
 	char type[4];
 	int diroffset;
@@ -40,20 +40,6 @@ CWADFile::CWADFile(const char * filename)
 	m_LumpStart=0;
 	
 	m_Filename = strdup(filename);
-	m_File=NULL;
-
-	if (filename == NULL)
-	{
-		printf("No file name specified\n");
-		return;
-	}
-
-	FILE *f = fopen(filename, "rb");
-	if (!f)
-	{
-		printf("%s: unable to open\n", filename);
-		return;
-	}
 
 	m_File = f;
 	fread(&type, 1, 4, f);
@@ -177,13 +163,50 @@ const char * CWADFile::GetLumpName(int lump)
 //
 //
 //==========================================================================
+
+void GrpExtract(const char* filename, FILE* f);
+
+//==========================================================================
+//
+//
+//
+//==========================================================================
 CWADFile *mainwad;
 
 void OpenMainWad(char *filename)
 {
-	mainwad = new CWADFile(filename);
-	if (mainwad->NumLumps() == 0)
+	if (filename == NULL)
 	{
+		printf("No file name specified\n");
 		exit(1);
 	}
+
+	FILE *f = fopen(filename, "rb");
+	if (!f)
+	{
+		printf("%s: unable to open\n", filename);
+		exit(1);
+	}
+
+
+	char type[4];
+	fread(&type, 1, 4, f);
+	fseek(f, 0, SEEK_SET);
+
+	if (memcmp(type, "IWAD", 4) == 0 || memcmp(type, "PWAD", 4) == 0)
+	{
+		mainwad = new CWADFile(filename, f);
+		if (mainwad->NumLumps() == 0)
+		{
+			exit(1);
+		}
+	}
+	else if (memcmp(type, "KenS", 4) == 0)
+	{
+		GrpExtract(filename, f);
+		exit(1);
+	}
+	printf("%s: not a WAD file\n", filename);
+	exit(1);
 }
+
