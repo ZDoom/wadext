@@ -465,7 +465,7 @@ void GenerateTextureFile(WadItemList * pTex,WadItemList * pPNam, int options)
 {
 	char buffer[40];
 	mkdir("decompiled");
-	sprintf(buffer,"decompiled\\textures.%c", pTex->Name()[7]);
+	sprintf(buffer,"decompiled/textures.%c", pTex->Name()[7]);
 	bool nulltex = !strnicmp(pTex->Name(), "TEXTURE1", 8);
 	GenerateTextureFile(buffer, (const char*)pTex->Address(), (const char *)pPNam->Address(), options, nulltex);
 }
