@@ -96,7 +96,7 @@ bool isPatch(const char * n)
 	nn[8] = 0;
 	strupr(nn);
 
-	for (int i = 0; i<*l; i++)
+	for (unsigned i = 0; i<*l; i++)
 	{
 		if (!strncmp(c, nn, 8)) return true;
 		c += 8;
@@ -125,7 +125,7 @@ const char * MakeFileName(const char * base, const char * ext)
 
 	for(int i=0;;i++)
 	{
-		if (i > 0) sprintf(buffer,"%s(%d)%s", basebuffer, i, ext);
+		if (i > 0) sprintf(buffer,"%s%s(%d)", basebuffer, ext, i);
 		else sprintf(buffer, "%s%s", basebuffer, ext);
 		strlwr(buffer);
 		FILE *f = fopen(buffer, "rb");
