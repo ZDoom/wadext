@@ -24,6 +24,9 @@ A simple [WAD](https://en.wikipedia.org/wiki/Doom_WAD) extraction command line t
 ## Compile instructions
 
 git clone https://github.com/coelckers/wadext.git
+
 cd wadext
+
 cmake .
+
 cmake --build .
