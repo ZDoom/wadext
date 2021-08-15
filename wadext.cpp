@@ -720,7 +720,7 @@ void GrpExtract(const char* filename, FILE* f)
 	{
 		buffer.Resize(fileinfo[i].Size);
 		fileinfo[i].NameWithZero[12] = '\0';	// Be sure filename is null-terminated
-		if (fileinfo[i].Size != fread(&buffer[0], 1, fileinfo[i].Size, f)) return;
+		if (buffer.Size() != fread(&buffer[0], 1, buffer.Size(), f)) return;
 		FILE* fout = fopen(fileinfo[i].NameWithZero, "wb");
 		if (fout)
 		{
