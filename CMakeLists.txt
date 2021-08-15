@@ -117,6 +117,7 @@ set( SOURCES
 	main.cpp
 	wadext.cpp
 	wadfile.cpp
+	file_rff.cpp
 )
 
 set( CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} ${REL_LINKER_FLAGS}" )

@@ -136,10 +136,10 @@ public:
 		Count = 0;
 		Array = NULL;
 	}
-	TArray (int max)
+	TArray (int max, bool alloc)
 	{
 		Most = max;
-		Count = 0;
+		Count = alloc? max : 0;
 		Array = (T *)malloc (sizeof(T)*max);
 	}
 	TArray (const TArray<T,TT> &other)
@@ -227,6 +227,11 @@ public:
 	T &Last() const
 	{
 		return Array[Count-1];
+	}
+
+	T* Data()
+	{
+		return Array;
 	}
 
     unsigned int Find(const T& item) const

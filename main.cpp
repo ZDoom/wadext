@@ -83,7 +83,7 @@ int main(int argc, char ** argv)
 	}
 	else
 	{
-		printf("WadExt v2.0 (c) 2016 Christoph Oelckers\nUsage: wadext [options] filename\n");
+		printf("WadExt v2.1 (c) 2016-2021 Christoph Oelckers\nUsage: wadext [options] filename\n");
 		printf("Options:\n");
 		printf("   -nogfxconvert : Leave Doom format patches and flats in their original form, if not specified they will be converted to PNG.\n");
 		printf("   -nosndconvert : Leave Doom format sounds in their original form, if not specified they will be converted to WAV.\n");

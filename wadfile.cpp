@@ -165,6 +165,7 @@ const char * CWADFile::GetLumpName(int lump)
 //==========================================================================
 
 void GrpExtract(const char* filename, FILE* f);
+void RffExtract(const char* filename, FILE* f);
 
 //==========================================================================
 //
@@ -206,7 +207,15 @@ void OpenMainWad(char *filename)
 		GrpExtract(filename, f);
 		exit(1);
 	}
-	printf("%s: not a WAD file\n", filename);
-	exit(1);
+	else if (!memcmp(type, "RFF\x1a", 4))
+	{
+		RffExtract(filename, f);
+		exit(1);
+	}
+	else
+	{
+		printf("%s: not a WAD file\n", filename);
+		exit(1);
+	}
 }
 
