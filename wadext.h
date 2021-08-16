@@ -7,6 +7,7 @@
 
 #else // !_MSC_VER
 
+#include <ctype.h>
 #include <unistd.h>
 #include <sys/stat.h>
 
