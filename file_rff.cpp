@@ -33,12 +33,6 @@
 **
 */
 
-#ifdef _MSC_VER
-#include <direct.h>
-#else // !_MSC_VER
-#include <unistd.h>
-#include <sys/stat.h>
-#endif // _MSC_VER
 #include <string>
 #include "resourcefile.h"
 #include "wadext.h"

@@ -1,7 +1,14 @@
 
 #include <stdint.h>
 
-#ifndef _MSC_VER
+#ifdef _MSC_VER
+
+#include <direct.h>
+
+#else // !_MSC_VER
+
+#include <unistd.h>
+#include <sys/stat.h>
 
 static char* strlwr(char* str)
 {
