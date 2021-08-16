@@ -41,6 +41,7 @@
 #endif // _MSC_VER
 #include <string>
 #include "resourcefile.h"
+#include "wadext.h"
 
 std::string ExtractFileBase(const char* path, bool include_extension);
 

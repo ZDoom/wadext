@@ -1,6 +1,35 @@
 
 #include <stdint.h>
 
+#ifndef _MSC_VER
+
+static char* strlwr(char* str)
+{
+	for (char* ch = str; '\0' != *ch; ++ch)
+	{
+		*ch = tolower(*ch);
+	}
+
+	return str;
+}
+
+static char* strupr(char* str)
+{
+	for (char* ch = str; '\0' != *ch; ++ch)
+	{
+		*ch = toupper(*ch);
+	}
+
+	return str;
+}
+
+static int mkdir(const char* path)
+{
+	return mkdir(path, 0755);
+}
+
+#endif // !_MSC_VER
+
 enum ExtractOpt
 {
 	NO_CONVERT_GFX=1,
