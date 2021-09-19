@@ -401,7 +401,7 @@ void SwitchExtract(WadItemList *w)
 }
 
 
-void GenerateTextureFile(const char *name, const char * pTex,const char * pPNam, int options, bool nullfirst)
+void GenerateTextureFile(const char *name, const char * pTex, int length, const char * pPNam, int options, bool nullfirst)
 {
 	const char * tr=pTex;
 	int tc =*(int*)tr;
@@ -411,8 +411,43 @@ void GenerateTextureFile(const char *name, const char * pTex,const char * pPNam,
 
 	FILE * fo=fopen(name,"wt");
 
-	// Todo: Be more thorough than this!
-	if (!(options&DO_STRIFE))
+	auto maptex = (const uint32_t*)pTex;
+	int numtextures = *maptex;
+	int maxoff = length;
+	int i;
+	const uint32_t* directory;
+
+	if (maxoff < uint32_t(numtextures + 1) * 4)
+	{
+		printf("%s: Texture directory is too short\n", name);
+		return;
+	}
+	bool isStrife = false;
+
+	// Scan the texture lump to decide if it contains Doom or Strife textures
+	for (i = 0, directory = maptex + 1; i < numtextures; ++i)
+	{
+		int offset = directory[i];
+		if (offset > maxoff)
+		{
+			printf("%s: Bad texture directory\n", name);
+			return;
+		}
+
+		maptexture_t* tex = (maptexture_t*)((uint8_t*)maptex + offset);
+
+		// There is bizzarely a Doom editing tool that writes to the
+		// first two elements of columndirectory, so I can't check those.
+		if (tex->patchcount < 0 ||
+			tex->columndirectory[2] != 0 ||
+			tex->columndirectory[3] != 0)
+		{
+			isStrife = true;
+			break;
+		}
+	}
+
+	if (!isStrife)
 	{
 		for(int i=0;i<tc;i++)
 			AddWallTexture(fo, (maptexture_t*)(tr+to[i]),pr, i == 0 && nullfirst);
@@ -433,7 +468,7 @@ void GenerateTextureFile(WadItemList * pTex,WadItemList * pPNam, int options)
 	mkdir("decompiled");
 	sprintf(buffer,"decompiled/textures.%c", pTex->Name()[7]);
 	bool nulltex = !strnicmp(pTex->Name(), "TEXTURE1", 8);
-	GenerateTextureFile(buffer, (const char*)pTex->Address(), (const char *)pPNam->Address(), options, nulltex);
+	GenerateTextureFile(buffer, (const char*)pTex->Address(), pTex->Length(), (const char *)pPNam->Address(), options, nulltex);
 }
 
 //==========================================================================
@@ -615,25 +650,31 @@ void ExtractWad(char * wadfilename,int options)
 
 void ConvertTextureX()
 {
-	FILE *ft1 = fopen("texture1", "rb");
+	FILE* ft1 = fopen("texture1", "rb");
 	if (!ft1) ft1 = fopen("texture1.lmp", "rb");
 
-	FILE *ft2 = fopen("texture2", "rb");
+	FILE* ft2 = fopen("texture2", "rb");
 	if (!ft2) ft2 = fopen("texture2.lmp", "rb");
 
-	FILE *pnm = fopen("pnames", "rb");
+	FILE* pnm = fopen("pnames", "rb");
 	if (!pnm) pnm = fopen("pnames.lmp", "rb");
 
 	if (!pnm) exit(1);
+	static char bt1[1000000], bpn[1000000];
+	fread(bpn, 1, 1000000, pnm), fclose(pnm);
 
-	static char bt1[100000], bt2[100000], bpn[100000];
-
-	if (ft1) fread(bt1, 1, 100000, ft1), fclose(ft1);
-	if (ft2) fread(bt2, 1, 100000, ft2), fclose(ft2);
-	if (pnm) fread(bpn, 1, 100000, pnm), fclose(pnm);
-
-	if (ft1) GenerateTextureFile("textures.txt", bt1, bpn, 0, true);
-	if (ft2) GenerateTextureFile("textures.txt2", bt2, bpn, 0, false);
+	if (ft1)
+	{
+		int l = (int)fread(bt1, 1, 1000000, ft1);
+		fclose(ft1);
+		GenerateTextureFile("textures.txt", bt1, l, bpn, 0, true);
+	}
+	if (ft2)
+	{
+		int l = (int)fread(bt1, 1, 1000000, ft2);
+		fclose(ft2);
+		GenerateTextureFile("textures.txt2", bt1, l, bpn, 0, false);
+	}
 }
 
 //==========================================================================
