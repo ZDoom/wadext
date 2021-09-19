@@ -417,7 +417,7 @@ void GenerateTextureFile(const char *name, const char * pTex, int length, const 
 	int i;
 	const uint32_t* directory;
 
-	if (maxoff < uint32_t(numtextures + 1) * 4)
+	if (maxoff < (numtextures + 1) * 4)
 	{
 		printf("%s: Texture directory is too short\n", name);
 		return;
