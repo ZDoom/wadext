@@ -14,6 +14,10 @@ IF( NOT CMAKE_BUILD_TYPE )
 		FORCE )
 ENDIF( NOT CMAKE_BUILD_TYPE )
 
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+	set(MACOSX TRUE)
+endif()
+
 set( SSE_MATTERS NO )
 
 if( CMAKE_COMPILER_IS_GNUCXX )
@@ -66,6 +70,10 @@ if( CMAKE_COMPILER_IS_GNUCXX )
 		message( STATUS "Using profile coverage information" )
 		set( ALL_C_FLAGS "${ALL_C_FLAGS} -fprofile-use" )
 	endif( PROFILE EQUAL 1 )
+	if (NOT MACOSX)
+		set(CMAKE_CXX_STANDARD_LIBRARIES "${CMAKE_CXX_STANDARD_LIBRARIES} -static -static-libgcc -static-libstdc++")
+		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static -static-libgcc -static-libstdc++")
+	endif(NOT MACOSX)
 endif( CMAKE_COMPILER_IS_GNUCXX )
 
 #if( WIN32 AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" )
