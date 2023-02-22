@@ -10,33 +10,30 @@ jobs:
       fail-fast: false
       matrix:
         config:
-        - {
-            name: "Visual Studio 64-bit",
-            os: windows-2019,
-            extra_options: "-A x64"
-          }
-        - {
-            name: "Visual Studio 32-bit",
-            os: windows-2019,
-            extra_options: "-A Win32"
-          }
-        - {
-            name: "macOS",
-            os: macos-10.15
-          }
-        - {
-            name: "Linux GCC",
-            os: ubuntu-20.04
-          }
-        - {
-            name: "Linux Clang",
-            os: ubuntu-20.04,
-            extra_options: "-DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++"
-          }
-        build_type: ["Release", "Debug"]
+        - name: Visual Studio 64-bit
+          os: windows-latest
+          extra_options: -A x64
+
+        - name: Visual Studio 32-bit
+          os: windows-latest
+          extra_options: -A Win32
+
+        - name: macOS
+          os: macos-latest
+
+        - name: Linux GCC
+          os: ubuntu-latest
+
+        - name: Linux Clang
+          os: ubuntu-latest
+          extra_options: -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++
+
+        build_type: 
+        - Release
+        - Debug
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Configure
       shell: bash
