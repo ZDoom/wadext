@@ -165,6 +165,7 @@ const char * CWADFile::GetLumpName(int lump)
 //==========================================================================
 
 void GrpExtract(const char* filename, FILE* f);
+void PakExtract(const char* filename, FILE* f);
 void RffExtract(const char* filename, FILE* f);
 
 //==========================================================================
@@ -205,6 +206,11 @@ void OpenMainWad(char *filename)
 	else if (memcmp(type, "KenS", 4) == 0)
 	{
 		GrpExtract(filename, f);
+		exit(1);
+	}
+	else if (memcmp(type, "PACK", 4) == 0)
+	{
+		PakExtract(filename, f);
 		exit(1);
 	}
 	else if (!memcmp(type, "RFF\x1a", 4))

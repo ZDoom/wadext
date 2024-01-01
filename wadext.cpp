@@ -679,6 +679,85 @@ void ConvertTextureX()
 
 //==========================================================================
 //
+// CreatePath
+//
+// Creates a directory including all levels necessary
+//
+//==========================================================================
+#ifdef _WIN32
+void CreatePath(const char* fn)
+{
+	char drive[_MAX_DRIVE];
+	char dir[_MAX_DIR];
+	_splitpath_s(fn, drive, sizeof drive, dir, sizeof dir, nullptr, 0, nullptr, 0);
+
+	if ('\0' == *dir)
+	{
+		// Root/current/parent directory always exists
+		return;
+	}
+
+	char path[_MAX_PATH];
+	_makepath_s(path, sizeof path, drive, dir, nullptr, nullptr);
+
+	if ('\0' == *path)
+	{
+		// No need to process empty relative path
+		return;
+	}
+
+	// Remove trailing path separator(s)
+	for (size_t i = strlen(path); 0 != i; --i)
+	{
+		char& lastchar = path[i - 1];
+
+		if ('/' == lastchar || '\\' == lastchar)
+		{
+			lastchar = '\0';
+		}
+		else
+		{
+			break;
+		}
+	}
+
+	// Create all directories for given path
+	if ('\0' != *path)
+	{
+		CreatePath(path);
+		_mkdir(path); // PAKs are ASCII only, so we won't need Unicode extension.
+	}
+}
+
+#else
+void CreatePath(const char* fn)
+{
+	char* copy, * p;
+
+	if (fn[0] == '/' && fn[1] == '\0')
+	{
+		return;
+	}
+	p = copy = strdup(fn);
+	do
+	{
+		p = strchr(p + 1, '/');
+		if (p != NULL)
+		{
+			*p = '\0';
+		}
+		mkdir(copy, 0755);
+		if (p != NULL)
+		{
+			*p = '/';
+		}
+	} while (p);
+	free(copy);
+}
+#endif
+
+//==========================================================================
+//
 //
 //
 //==========================================================================
@@ -732,6 +811,64 @@ void GrpExtract(const char* filename, FILE* f)
 		if (fout)
 		{
 			fwrite(&buffer[0], 1, fileinfo[i].Size, fout);
+			fclose(fout);
+		}
+	}
+	exit(1);
+}
+
+//==========================================================================
+//
+//
+//
+//==========================================================================
+
+struct dpackfile_t
+{
+	char	name[56];
+	uint32_t		filepos, filelen;
+};
+
+struct dpackheader_t
+{
+	uint32_t		ident;		// == IDPAKHEADER
+	uint32_t		dirofs;
+	uint32_t		dirlen;
+};
+
+void PakExtract(const char* filename, FILE* f)
+{
+	TArray<dpackfile_t> fileinfo;
+
+	dpackheader_t header;
+
+	if (1 != fread(&header, sizeof(header), 1, f)) return;
+
+	if (memcmp(&header.ident, "PACK", 4))
+	{
+		return;
+	}
+	fseek(f, header.dirofs, SEEK_SET);
+
+	uint32_t NumLumps = header.dirlen / sizeof(dpackfile_t);
+	fileinfo.Resize(NumLumps);
+
+	if (NumLumps != fread(&fileinfo[0], sizeof(dpackfile_t), NumLumps, f)) return;
+	auto name = ExtractFileBase(filename, false);
+	mkdir(name.c_str());
+	chdir(name.c_str());
+
+	TArray<char> buffer;
+	for (uint32_t i = 0; i < NumLumps; i++)
+	{
+		buffer.Resize(fileinfo[i].filelen);
+		fseek(f, fileinfo[i].filepos, SEEK_SET);
+		if (buffer.Size() != fread(&buffer[0], 1, buffer.Size(), f)) return;
+		CreatePath(fileinfo[i].name);
+		FILE* fout = fopen(fileinfo[i].name, "wb");
+		if (fout)
+		{
+			fwrite(&buffer[0], 1, fileinfo[i].filelen, fout);
 			fclose(fout);
 		}
 	}
